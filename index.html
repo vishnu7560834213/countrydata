@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Country</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .center-image {
+            display: flex;
+            justify-content: center;
+            color: azure;
+        }
+    </style>
+    <script>
+        function fetchCountryDetails() {
+            const countryName = document.getElementById('countryName').value;
+            const apiUrl = `https://restcountries.com/v3.1/name/${countryName}?fullText=true`;
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const country = data[0];
+                    if (country) {
+                        displayCountryDetails(country);
+                    } else {
+                        document.getElementById('countryDetails').innerHTML = 'Country details not found.';
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem fetching the country details:', error);
+                });
+        }
+
+        function displayCountryDetails(country) {
+            const countryDetails = `
+                <div class="row">
+                    <div class="col">
+                        <h2>${country.name.common}</h2>
+                        <p>Capital: ${country.capital}</p>
+                        <p>Population: ${country.population}</p>
+                        <p>Region: ${country.region}</p>
+                        <p>Subregion: ${country.subregion}</p>
+                        <p>Flag:</p>
+                        <p><img src="${country.flags.svg}" alt="${country.name.common} Flag" style="max-width: 200px;"></p>
+                    </div>
+                    <div class="col center-image">
+                        <p><img src="${country.coatOfArms?.svg}" alt="${country.name.common} Symbol" style="max-width: 200px;"></p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('countryDetails').innerHTML = countryDetails;
+        }
+    </script>
+</head>
+<body style="background-repeat: no-repeat; background-image: url('https://simplemaps.com/static/demos/resources/svg-library/svgs/world.svg');">
+    <div class="container mt-5">
+        <h1 class="text-center">Country</h1>
+        <div class="input-group mb-3">
+            <input type="text" id="countryName" class="form-control" placeholder="Enter country name">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" onclick="fetchCountryDetails()">Search</button>
+            </div>
+        </div>
+        <div id="countryDetails"></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
